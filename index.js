@@ -1,38 +1,37 @@
-const path = require('path');
-const spawn = require('child_process').spawn;
-const url = require('url');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path')
+const spawn = require('child_process').spawn
+const url = require('url')
+const { app, BrowserWindow, ipcMain } = require('electron')
 
-let win;
+let win
 
 function createWindow() {
 	win = new BrowserWindow({
 		height: 300,
 		width: 400,
-	});
+	})
 
 	win.loadURL(url.format({
 		pathname: path.join(__dirname, 'index.html'),
 		protocol: 'file:',
 		slashes: true,
-	}));
+	}))
 
-	win.setMenu(null);
+	win.setMenu(null)
 
-	win.webContents.openDevTools();
+	win.webContents.openDevTools()
 }
 
-app.on('ready', createWindow);
+app.on('ready', createWindow)
 
 ipcMain.on('command.run', (event, arg) => {
-	// const cmd = spawn('ifconfig', ['container', 'rm', ids.join(' ')]);
 	let error = null
 	let output = ''
 	let stdout = ''
 	let stderr = ''
 
 	const [entry, ...commandArgs] = arg.command.split(' ')
-	console.log(entry, commandArgs);
+	console.log(entry, commandArgs)
 	const cmd = spawn(entry, commandArgs)
 
 	cmd.stdout.on('data', data => {
