@@ -64,20 +64,26 @@ body {
 
 		elInputForm.addEventListener('submit', (event) => {
 			event.preventDefault()
-			running(true)
-
-			const command = elInput.value
-			appendOutput('$ ' + command)
-			ipcRenderer.send('command.run', { command })
+			run(elInput.value)
 		})
 
 		ipcRenderer.on('command.done', (event, arg) => {
-			running(false)
-
-			appendOutput(arg.output)
-			elInput.value = ''
-			elInput.focus()
+			applyResult(arg)
 		})
+	}
+
+	function run(command) {
+		running(true)
+		appendOutput('$ ' + command)
+		ipcRenderer.send('command.run', { command })
+	}
+
+	function applyResult(arg) {
+		running(false)
+
+		appendOutput(arg.output)
+		elInput.value = ''
+		elInput.focus()
 	}
 
 	function running(running) {
