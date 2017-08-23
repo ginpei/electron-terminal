@@ -24,27 +24,38 @@ function createWindow() {
 
 app.on('ready', createWindow);
 
-ipcMain.on('ifconfig.run', (event, arg) => {
+ipcMain.on('command.run', (event, arg) => {
 	// const cmd = spawn('ifconfig', ['container', 'rm', ids.join(' ')]);
+	let error = null
+	let output = ''
 	let stdout = ''
 	let stderr = ''
 
-	var isWin = require('os').platform().indexOf('win') > -1
-	const cmd = spawn(isWin ? 'ipconfig' : 'ifconfif')
+	const [entry, ...commandArgs] = arg.command.split(' ')
+	console.log(entry, commandArgs);
+	const cmd = spawn(entry, commandArgs)
 
 	cmd.stdout.on('data', data => {
-		stdout += data.toString()
+		const text = data.toString()
+		console.log('stdout', text)
+		output += text
+		stdout += text
 	})
 
 	cmd.stderr.on('data', data => {
-		stderr += data.toString()
+		const text = data.toString()
+		console.log('stderr', text)
+		output += text
+		stderr += text
 	})
 
-	cmd.on('error', error => {
-		stderr += error.message
+	cmd.on('error', _error => {
+		console.log('ERROR', _error.message)
+		error = _error
 	})
 
 	cmd.on('close', code => {
-		event.sender.send('ifconfig.done', { code, stderr, stdout })
+		console.log('done!')
+		event.sender.send('command.done', { code, error, output, stderr, stdout })
 	})
 })
