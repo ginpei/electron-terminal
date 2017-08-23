@@ -52,6 +52,8 @@ body {
 		</div>
 		<script>
 (function() {
+	const { ipcRenderer } = require('electron')
+
 	function $(selector) {
 		return document.querySelector(selector)
 	}
@@ -60,14 +62,27 @@ body {
 	const elOutput = $('#output')
 	const elStatus = $('#status')
 
-	elGet.addEventListener('click', (event) => {
-		elGet.disabled = true
-
-		elOutput.value = 'Hello'
-		elStatus.textContent = 'Done.'
-	})
-
 	function start() {
+		elGet.addEventListener('click', (event) => {
+			elGet.disabled = true
+			elStatus.textContent = 'Running...'
+
+			ipcRenderer.send('ifconfig.run', { message: 'Hello!' })
+		})
+
+		ipcRenderer.on('ifconfig.done', (event, arg) => {
+			elGet.disabled = false
+
+			if (arg.code === 0) {
+				elStatus.textContent = 'Done.'
+				elOutput.value = arg.stdout
+			}
+			else {
+				elStatus.textContent = `Error: ${arg.code}`
+				elOutput.value = arg.stderr
+			}
+		})
+
 		elGet.disabled = false
 		elStatus.textContent = 'Ready.'
 	}
