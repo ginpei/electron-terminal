@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "run": "electron .",
+    "start": "npm run run -s"
+  },
+  "dependencies": {
+    "electron": "^1.6.10"
+  },
+  "devDependencies": {}
+}
