@@ -42,7 +42,7 @@ body {
 				<textarea id="output" class="output" readonly></textarea>
 			</div>
 			<form id="input-form" class="input-row">
-				<input id="input" class="input-text" type="text" placeholder="e.g. ls, pwd, ..." disabled />
+				<input id="input" class="input-text" type="text" placeholder="e.g. ls, pwd, ..." title="Input `--debug` to open DevTools" disabled />
 				<button id="run" disabled>Run</button>
 			</form>
 		</div>
@@ -75,9 +75,18 @@ body {
 	}
 
 	function run(command) {
-		running(true)
-		appendOutput('$ ' + command)
-		ipcRenderer.send('command.run', { command })
+		if (!command) {
+			return
+		}
+
+		if (command.trim() === '--debug') {
+			openDevTools()
+		}
+		else {
+			running(true)
+			appendOutput('$ ' + command)
+			ipcRenderer.send('command.run', { command })
+		}
 	}
 
 	function applyResult(arg) {
@@ -95,6 +104,12 @@ body {
 
 	function appendOutput(output) {
 		elOutput.value += '\n' + output
+	}
+
+	function openDevTools() {
+		ipcRenderer.send('openDevTools')
+		elInput.value = ''
+		elInput.focus()
 	}
 
 	start()

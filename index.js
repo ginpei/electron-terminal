@@ -18,8 +18,6 @@ function createWindow() {
 	}))
 
 	win.setMenu(null)
-
-	win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow)
@@ -57,4 +55,8 @@ ipcMain.on('command.run', (event, arg) => {
 		console.log('done!')
 		event.sender.send('command.done', { code, error, output, stderr, stdout })
 	})
+})
+
+ipcMain.on('openDevTools', (event, arg) => {
+	win.webContents.openDevTools()
 })
