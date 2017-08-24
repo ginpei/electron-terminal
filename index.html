@@ -70,6 +70,8 @@ body {
 		ipcRenderer.on('command.done', (event, arg) => {
 			applyResult(arg)
 		})
+
+		run('pwd')
 	}
 
 	function run(command) {
