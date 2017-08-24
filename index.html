@@ -103,7 +103,15 @@ body {
 	}
 
 	function appendOutput(output) {
+		const scrollBottom = elOutput.scrollTop + elOutput.clientHeight
+		const progress = scrollBottom / elOutput.scrollHeight
+
 		elOutput.value += '\n' + output
+
+		// scroll to bottom unless seeing above
+		if (progress > 0.95) {
+			elOutput.scrollTop = elOutput.scrollHeight
+		}
 	}
 
 	function openDevTools() {
